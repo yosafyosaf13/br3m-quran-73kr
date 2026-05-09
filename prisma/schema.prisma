@@ -12,7 +12,7 @@ model User {
   name      String
   username   String   @unique
   password   String
-  role       String   @default("teacher") // admin, teacher
+  role       String   @default("teacher") // superadmin, admin, teacher
   phone      String?
   email      String?
   active     Boolean  @default(true)
@@ -173,4 +173,40 @@ model Backup {
   fileName  String
   fileSize  Float
   createdAt DateTime @default(now())
+}
+
+model LearningMaterial {
+  id           String   @id @default(cuid())
+  title        String
+  description  String?
+  category     String   @default("quran") // tajweed, memorization, quran, dua, activity, story
+  type         String   @default("video") // video, audio, pdf, image, link, interactive
+  url          String?
+  fileUrl      String?
+  thumbnailUrl String?
+  level        String   @default("all") // beginner, intermediate, advanced, all
+  ageGroup     String   @default("3-7")
+  duration     Int?     // in minutes
+  surahNumber  Int?
+  surahName    String?
+  tags         String?
+  isActive     Boolean  @default(true)
+  viewCount    Int      @default(0)
+  createdBy    String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Kindergarten {
+  id                 String   @id @default(cuid())
+  name               String
+  address            String?
+  phone              String?
+  logo               String?
+  adminId            String?
+  active             Boolean  @default(true)
+  subscriptionStatus String   @default("trial") // trial, active, expired
+  subscriptionEnd    DateTime?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
 }

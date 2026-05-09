@@ -2,7 +2,7 @@ export interface User {
   id: string;
   name: string;
   username: string;
-  role: 'admin' | 'teacher';
+  role: 'superadmin' | 'admin' | 'teacher';
   phone?: string;
   email?: string;
   active: boolean;
@@ -124,6 +124,41 @@ export interface Setting {
   keyValue?: string;
 }
 
+export interface LearningMaterial {
+  id: string;
+  title: string;
+  description?: string;
+  category: 'tajweed' | 'memorization' | 'quran' | 'dua' | 'activity' | 'story';
+  type: 'video' | 'audio' | 'pdf' | 'image' | 'link' | 'interactive';
+  url?: string;
+  fileUrl?: string;
+  thumbnailUrl?: string;
+  level: 'beginner' | 'intermediate' | 'advanced' | 'all';
+  ageGroup: string;
+  duration?: number;
+  surahNumber?: number;
+  surahName?: string;
+  tags?: string;
+  isActive: boolean;
+  viewCount: number;
+  createdBy?: string;
+  createdAt: string;
+}
+
+export interface Kindergarten {
+  id: string;
+  name: string;
+  address?: string;
+  phone?: string;
+  logo?: string;
+  adminId?: string;
+  active: boolean;
+  subscriptionStatus: 'trial' | 'active' | 'expired';
+  subscriptionEnd?: string;
+  createdAt: string;
+  admin?: User;
+}
+
 export interface DashboardStats {
   totalStudents: number;
   totalClasses: number;
@@ -150,7 +185,9 @@ export type AppView =
   | 'reports' 
   | 'settings' 
   | 'learning' 
-  | 'backup';
+  | 'backup'
+  | 'superadmin'
+  | 'materials';
 
 export interface AuthState {
   user: User | null;

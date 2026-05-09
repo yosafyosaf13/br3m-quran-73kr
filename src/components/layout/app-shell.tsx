@@ -42,6 +42,12 @@ const LearningView = lazy(() =>
 const BackupView = lazy(() =>
   import('@/components/settings/backup-view').then(m => ({ default: m.BackupView }))
 );
+const SuperAdminView = lazy(() =>
+  import('@/components/superadmin/superadmin-view').then(m => ({ default: m.SuperAdminView }))
+);
+const MaterialsView = lazy(() =>
+  import('@/components/materials/materials-view').then(m => ({ default: m.MaterialsView }))
+);
 
 function ViewLoadingFallback() {
   return (
@@ -75,7 +81,9 @@ export function AppShell({ onPortalAccess }: { onPortalAccess: () => void }) {
       reports: <ReportsView />,
       settings: user?.role === 'admin' ? <SettingsView /> : <DashboardView />,
       learning: <LearningView />,
-      backup: user?.role === 'admin' ? <BackupView /> : <DashboardView />,
+      backup: user?.role === 'admin' || user?.role === 'superadmin' ? <BackupView /> : <DashboardView />,
+      superadmin: user?.role === 'superadmin' ? <SuperAdminView /> : <DashboardView />,
+      materials: <MaterialsView />,
     };
 
     return viewMap[currentView] || <DashboardView />;

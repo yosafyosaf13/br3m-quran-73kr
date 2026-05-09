@@ -20,27 +20,32 @@ import {
   X,
   Database,
   ExternalLink,
+  Shield,
+  Library,
 } from 'lucide-react';
 
-const menuItems: { id: AppView; label: string; icon: React.ElementType; adminOnly?: boolean }[] = [
+const menuItems: { id: AppView; label: string; icon: React.ElementType; adminOnly?: boolean; superAdminOnly?: boolean }[] = [
   { id: 'dashboard', label: 'لوحة التحكم', icon: LayoutDashboard },
   { id: 'students', label: 'الطلاب', icon: Users },
   { id: 'attendance', label: 'الحضور والانصراف', icon: UserCheck },
   { id: 'memorization', label: 'الحفظ والتسميع', icon: BookOpen },
   { id: 'payments', label: 'المدفوعات', icon: CreditCard },
   { id: 'classes', label: 'الفصول', icon: GraduationCap },
+  { id: 'materials', label: 'المواد التعليمية', icon: Library },
   { id: 'users', label: 'المستخدمين', icon: UserCog, adminOnly: true },
   { id: 'notifications', label: 'الإشعارات', icon: Bell },
   { id: 'reports', label: 'التقارير', icon: BarChart3 },
   { id: 'learning', label: 'التعلم التفاعلي', icon: BookMarked },
   { id: 'settings', label: 'الإعدادات', icon: Settings, adminOnly: true },
   { id: 'backup', label: 'النسخ الاحتياطي', icon: Database, adminOnly: true },
+  { id: 'superadmin', label: '⚡ لوحة السوبر أدمن', icon: Shield, superAdminOnly: true },
 ];
 
 export function Sidebar({ onPortalAccess }: { onPortalAccess?: () => void }) {
   const { user, logout } = useAuthStore();
   const { currentView, setCurrentView, sidebarOpen, toggleSidebar } = useAppStore();
-  const isAdmin = user?.role === 'admin';
+  const isAdmin = user?.role === 'admin' || user?.role === 'superadmin';
+  const isSuperAdmin = user?.role === 'superadmin';
 
   return (
     <>
@@ -84,7 +89,11 @@ export function Sidebar({ onPortalAccess }: { onPortalAccess?: () => void }) {
         {/* Menu */}
         <nav className="flex-1 overflow-y-auto p-3 space-y-1">
           {menuItems
-            .filter(item => !item.adminOnly || isAdmin)
+            .filter(item => {
+              if (item.superAdminOnly) return isSuperAdmin;
+              if (item.adminOnly) return isAdmin;
+              return true;
+            })
             .map((item) => {
               const Icon = item.icon;
               const isActive = currentView === item.id;
@@ -131,7 +140,7 @@ export function Sidebar({ onPortalAccess }: { onPortalAccess?: () => void }) {
             <div className="min-w-0 flex-1">
               <p className="text-sm font-medium truncate">{user?.name}</p>
               <p className="text-xs text-muted-foreground">
-                {user?.role === 'admin' ? 'مدير النظام' : 'معلم'}
+                {user?.role === 'superadmin' ? '⚡ سوبر أدمن' : user?.role === 'admin' ? 'مدير النظام' : 'معلم'}
               </p>
             </div>
           </div>
