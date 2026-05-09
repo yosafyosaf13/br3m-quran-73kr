@@ -1,0 +1,176 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  username   String   @unique
+  password   String
+  role       String   @default("teacher") // admin, teacher
+  phone      String?
+  email      String?
+  active     Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  classes    Class[]
+  attendance Attendance[]
+  memorization Memorization[]
+  payments   Payment[]
+  activityLogs ActivityLog[]
+}
+
+model Class {
+  id          String   @id @default(cuid())
+  name        String
+  teacherId   String
+  description String?
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  teacher     User     @relation(fields: [teacherId], references: [id])
+  students    Student[]
+  homework    Homework[]
+}
+
+model Student {
+  id                 String   @id @default(cuid())
+  name               String
+  birthDate          String?
+  gender             String   @default("male") // male, female
+  classId            String?
+  parentName         String?
+  parentPhone        String?
+  parentPhone2       String?
+  address            String?
+  enrollmentDate     String?
+  photo              String?
+  notes              String?
+  active             Boolean  @default(true)
+  approvalStatus     String   @default("approved") // pending, approved, rejected
+  parentIdPhoto      String?
+  birthCertificatePhoto String?
+  noorAlBayanLevel   Int      @default(0)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  class              Class?   @relation(fields: [classId], references: [id])
+  attendance         Attendance[]
+  memorization       Memorization[]
+  payments           Payment[]
+  skills             StudentSkill[]
+}
+
+model Attendance {
+  id          String   @id @default(cuid())
+  studentId   String
+  date        String
+  status      String   @default("present") // present, absent, late, excused
+  notes       String?
+  recordedBy  String
+  createdAt   DateTime @default(now())
+
+  student     Student  @relation(fields: [studentId], references: [id])
+  recorder    User     @relation(fields: [recordedBy], references: [id])
+
+  @@unique([studentId, date])
+}
+
+model Memorization {
+  id           String   @id @default(cuid())
+  studentId    String
+  type         String   // sabak, sabqi, manzil
+  surahNumber  Int
+  surahName    String
+  fromAyah     Int      @default(1)
+  toAyah       Int      @default(1)
+  totalAyahs   Int      @default(1)
+  grade        String?  // excellent, very_good, good, acceptable, weak
+  notes        String?
+  date         String
+  teacherId    String
+  createdAt    DateTime @default(now())
+
+  student      Student  @relation(fields: [studentId], references: [id])
+  teacher      User     @relation(fields: [teacherId], references: [id])
+}
+
+model Payment {
+  id           String   @id @default(cuid())
+  studentId    String
+  amount       Float
+  type         String   // registration, monthly, other
+  month        String?
+  year         Int?
+  paymentDate  String
+  notes        String?
+  receivedBy   String
+  createdAt    DateTime @default(now())
+
+  student      Student  @relation(fields: [studentId], references: [id])
+  receiver     User     @relation(fields: [receivedBy], references: [id])
+}
+
+model Notification {
+  id         String   @id @default(cuid())
+  title      String
+  message    String
+  target     String   @default("all") // all, admin, teacher
+  createdBy  String?
+  createdAt  DateTime @default(now())
+}
+
+model ActivityLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  action    String
+  details   String?
+  ip        String?
+  createdAt DateTime @default(now())
+
+  user      User?    @relation(fields: [userId], references: [id])
+}
+
+model Setting {
+  id       String @id @default(cuid())
+  keyName  String @unique
+  keyValue String?
+}
+
+model StudentSkill {
+  id            String   @id @default(cuid())
+  studentId     String
+  skillName     String
+  skillCategory String
+  rating        Int      @default(1) // 1-5
+  notes         String?
+  lastUpdated   DateTime @default(now())
+
+  student       Student  @relation(fields: [studentId], references: [id])
+}
+
+model Homework {
+  id          String   @id @default(cuid())
+  title       String
+  subject     String?
+  description String?
+  filePath    String?
+  classId     String?
+  createdAt   DateTime @default(now())
+
+  class       Class?   @relation(fields: [classId], references: [id])
+}
+
+model Backup {
+  id        String   @id @default(cuid())
+  fileName  String
+  fileSize  Float
+  createdAt DateTime @default(now())
+}
