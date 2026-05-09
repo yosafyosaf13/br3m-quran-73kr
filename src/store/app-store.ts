@@ -11,7 +11,7 @@ interface AppState {
 
 export const useAppStore = create<AppState>((set) => ({
   currentView: 'dashboard',
-  sidebarOpen: false, // Default to closed for mobile-friendly experience
+  sidebarOpen: true, // Open by default so sidebar is always visible
   setCurrentView: (view) => set({ currentView: view }),
   setSidebarOpen: (open) => set({ sidebarOpen: open }),
   toggleSidebar: () => set((state) => ({ sidebarOpen: !state.sidebarOpen })),

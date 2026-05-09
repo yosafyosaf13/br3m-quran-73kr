@@ -90,10 +90,10 @@ export function AppShell({ onPortalAccess }: { onPortalAccess: () => void }) {
   };
 
   return (
-    <div className="flex h-screen overflow-hidden bg-background">
+    <div className="flex h-screen overflow-hidden bg-background" dir="rtl">
       <Sidebar onPortalAccess={onPortalAccess} />
-      <main className={`flex-1 overflow-y-auto transition-all duration-300 ${sidebarOpen ? 'md:mr-72' : ''}`}>
-        <div className="p-4 md:p-6 lg:p-8">
+      <main className={`flex-1 overflow-y-auto transition-all duration-300 ${sidebarOpen ? 'md:mr-72' : 'mr-0'}`}>
+        <div className="p-4 md:p-6 lg:p-8 pt-16 md:pt-6">
           <Suspense fallback={<ViewLoadingFallback />}>
             {renderView()}
           </Suspense>
